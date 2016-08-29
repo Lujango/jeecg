@@ -1,4 +1,4 @@
-package com.jeecg.testorder.entity;
+package com.jeecg.hdbus.entity;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.lang.String;
@@ -19,42 +19,42 @@ import org.jeecgframework.poi.excel.annotation.Excel;
 
 /**   
  * @Title: Entity
- * @Description: 业务单
+ * @Description: 业务单主表
  * @author onlineGenerator
- * @date 2016-08-27 14:22:49
+ * @date 2016-08-29 20:45:49
  * @version V1.0   
  *
  */
 @Entity
-@Table(name = "busi_order", schema = "")
+@Table(name = "hd_order_main", schema = "")
 @SuppressWarnings("serial")
-public class BusiOrderEntity implements java.io.Serializable {
+public class HdOrderMainEntity implements java.io.Serializable {
 	/**主键*/
 	private java.lang.String id;
-	/**流程状态*/
-	private java.lang.String bpmStatus;
 	/**创建人名称*/
 	private java.lang.String createName;
 	/**创建人登录名称*/
 	private java.lang.String createBy;
+	/**创建日期*/
+	private java.util.Date createDate;
 	/**更新人名称*/
 	private java.lang.String updateName;
 	/**更新人登录名称*/
 	private java.lang.String updateBy;
+	/**更新日期*/
+	private java.util.Date updateDate;
 	/**所属部门*/
 	private java.lang.String sysOrgCode;
 	/**所属公司*/
 	private java.lang.String sysCompanyCode;
-	/**创建日期*/
-	private java.util.Date createDate;
-	/**更新日期*/
-	private java.util.Date updateDate;
-	/**负责人*/
-    @Excel(name="负责人")
+	/**流程状态*/
+	private java.lang.String bpmStatus;
+	/**接单时间*/
+    @Excel(name="接单时间",format = "yyyy-MM-dd")
+	private java.util.Date orderGetTime;
+	/**业务单主管*/
+    @Excel(name="业务单主管")
 	private java.lang.String leader;
-	/**接单日*/
-    @Excel(name="接单日",format = "yyyy-MM-dd")
-	private java.util.Date orderGetDate;
 	
 	/**
 	 *方法: 取得java.lang.String
@@ -75,24 +75,6 @@ public class BusiOrderEntity implements java.io.Serializable {
 	 */
 	public void setId(java.lang.String id){
 		this.id = id;
-	}
-	
-	/**
-	 *方法: 取得java.lang.String
-	 *@return: java.lang.String  流程状态
-	 */
-	
-	@Column(name ="BPM_STATUS",nullable=true,length=32)
-	public java.lang.String getBpmStatus(){
-		return this.bpmStatus;
-	}
-
-	/**
-	 *方法: 设置java.lang.String
-	 *@param: java.lang.String  流程状态
-	 */
-	public void setBpmStatus(java.lang.String bpmStatus){
-		this.bpmStatus = bpmStatus;
 	}
 	
 	/**
@@ -132,6 +114,24 @@ public class BusiOrderEntity implements java.io.Serializable {
 	}
 	
 	/**
+	 *方法: 取得java.util.Date
+	 *@return: java.util.Date  创建日期
+	 */
+	
+	@Column(name ="CREATE_DATE",nullable=true,length=20)
+	public java.util.Date getCreateDate(){
+		return this.createDate;
+	}
+
+	/**
+	 *方法: 设置java.util.Date
+	 *@param: java.util.Date  创建日期
+	 */
+	public void setCreateDate(java.util.Date createDate){
+		this.createDate = createDate;
+	}
+	
+	/**
 	 *方法: 取得java.lang.String
 	 *@return: java.lang.String  更新人名称
 	 */
@@ -165,6 +165,24 @@ public class BusiOrderEntity implements java.io.Serializable {
 	 */
 	public void setUpdateBy(java.lang.String updateBy){
 		this.updateBy = updateBy;
+	}
+	
+	/**
+	 *方法: 取得java.util.Date
+	 *@return: java.util.Date  更新日期
+	 */
+	
+	@Column(name ="UPDATE_DATE",nullable=true,length=20)
+	public java.util.Date getUpdateDate(){
+		return this.updateDate;
+	}
+
+	/**
+	 *方法: 设置java.util.Date
+	 *@param: java.util.Date  更新日期
+	 */
+	public void setUpdateDate(java.util.Date updateDate){
+		this.updateDate = updateDate;
 	}
 	
 	/**
@@ -204,44 +222,44 @@ public class BusiOrderEntity implements java.io.Serializable {
 	}
 	
 	/**
-	 *方法: 取得java.util.Date
-	 *@return: java.util.Date  创建日期
+	 *方法: 取得java.lang.String
+	 *@return: java.lang.String  流程状态
 	 */
 	
-	@Column(name ="CREATE_DATE",nullable=true,length=20)
-	public java.util.Date getCreateDate(){
-		return this.createDate;
+	@Column(name ="BPM_STATUS",nullable=true,length=32)
+	public java.lang.String getBpmStatus(){
+		return this.bpmStatus;
+	}
+
+	/**
+	 *方法: 设置java.lang.String
+	 *@param: java.lang.String  流程状态
+	 */
+	public void setBpmStatus(java.lang.String bpmStatus){
+		this.bpmStatus = bpmStatus;
+	}
+	
+	/**
+	 *方法: 取得java.util.Date
+	 *@return: java.util.Date  接单时间
+	 */
+	
+	@Column(name ="ORDER_GET_TIME",nullable=true,length=32)
+	public java.util.Date getOrderGetTime(){
+		return this.orderGetTime;
 	}
 
 	/**
 	 *方法: 设置java.util.Date
-	 *@param: java.util.Date  创建日期
+	 *@param: java.util.Date  接单时间
 	 */
-	public void setCreateDate(java.util.Date createDate){
-		this.createDate = createDate;
-	}
-	
-	/**
-	 *方法: 取得java.util.Date
-	 *@return: java.util.Date  更新日期
-	 */
-	
-	@Column(name ="UPDATE_DATE",nullable=true,length=20)
-	public java.util.Date getUpdateDate(){
-		return this.updateDate;
-	}
-
-	/**
-	 *方法: 设置java.util.Date
-	 *@param: java.util.Date  更新日期
-	 */
-	public void setUpdateDate(java.util.Date updateDate){
-		this.updateDate = updateDate;
+	public void setOrderGetTime(java.util.Date orderGetTime){
+		this.orderGetTime = orderGetTime;
 	}
 	
 	/**
 	 *方法: 取得java.lang.String
-	 *@return: java.lang.String  负责人
+	 *@return: java.lang.String  业务单主管
 	 */
 	
 	@Column(name ="LEADER",nullable=true,length=32)
@@ -251,28 +269,10 @@ public class BusiOrderEntity implements java.io.Serializable {
 
 	/**
 	 *方法: 设置java.lang.String
-	 *@param: java.lang.String  负责人
+	 *@param: java.lang.String  业务单主管
 	 */
 	public void setLeader(java.lang.String leader){
 		this.leader = leader;
-	}
-	
-	/**
-	 *方法: 取得java.util.Date
-	 *@return: java.util.Date  接单日
-	 */
-	
-	@Column(name ="ORDER_GET_DATE",nullable=false,length=32)
-	public java.util.Date getOrderGetDate(){
-		return this.orderGetDate;
-	}
-
-	/**
-	 *方法: 设置java.util.Date
-	 *@param: java.util.Date  接单日
-	 */
-	public void setOrderGetDate(java.util.Date orderGetDate){
-		this.orderGetDate = orderGetDate;
 	}
 	
 }

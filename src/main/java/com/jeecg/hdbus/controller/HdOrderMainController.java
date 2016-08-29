@@ -1,8 +1,9 @@
-package com.jeecg.testorder.controller;
-import com.jeecg.testorder.entity.BusiOrderEntity;
-import com.jeecg.testorder.service.BusiOrderServiceI;
-import com.jeecg.testorder.page.BusiOrderPage;
-import com.jeecg.order.entity.BusiOrderSalerEntity;
+package com.jeecg.hdbus.controller;
+import com.jeecg.hdbus.entity.HdOrderMainEntity;
+import com.jeecg.hdbus.service.HdOrderMainServiceI;
+import com.jeecg.hdbus.page.HdOrderMainPage;
+import com.jeecg.buy.entity.HdOrderBuyEntity;
+import com.jeecg.sell.entity.HdOrderSellEntity;
 import java.util.ArrayList;
 import java.util.List;
 import java.text.SimpleDateFormat;
@@ -60,35 +61,35 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 /**   
  * @Title: Controller
- * @Description: 业务单
+ * @Description: 业务单主表
  * @author onlineGenerator
- * @date 2016-08-27 14:22:49
+ * @date 2016-08-29 20:45:49
  * @version V1.0   
  *
  */
 @Controller
-@RequestMapping("/busiOrderController")
-public class BusiOrderController extends BaseController {
+@RequestMapping("/hdOrderMainController")
+public class HdOrderMainController extends BaseController {
 	/**
 	 * Logger for this class
 	 */
-	private static final Logger logger = Logger.getLogger(BusiOrderController.class);
+	private static final Logger logger = Logger.getLogger(HdOrderMainController.class);
 
 	@Autowired
-	private BusiOrderServiceI busiOrderService;
+	private HdOrderMainServiceI hdOrderMainService;
 	@Autowired
 	private SystemService systemService;
 	@Autowired
 	private Validator validator;
 
 	/**
-	 * 业务单列表 页面跳转
+	 * 业务单主表列表 页面跳转
 	 * 
 	 * @return
 	 */
 	@RequestMapping(params = "list")
 	public ModelAndView list(HttpServletRequest request) {
-		return new ModelAndView("com/jeecg/testorder/busiOrderList");
+		return new ModelAndView("com/jeecg/hdbus/hdOrderMainList");
 	}
 
 	/**
@@ -101,37 +102,37 @@ public class BusiOrderController extends BaseController {
 	 */
 
 	@RequestMapping(params = "datagrid")
-	public void datagrid(BusiOrderEntity busiOrder,HttpServletRequest request, HttpServletResponse response, DataGrid dataGrid) {
-		CriteriaQuery cq = new CriteriaQuery(BusiOrderEntity.class, dataGrid);
+	public void datagrid(HdOrderMainEntity hdOrderMain,HttpServletRequest request, HttpServletResponse response, DataGrid dataGrid) {
+		CriteriaQuery cq = new CriteriaQuery(HdOrderMainEntity.class, dataGrid);
 		//查询条件组装器
-		org.jeecgframework.core.extend.hqlsearch.HqlGenerateUtil.installHql(cq, busiOrder);
+		org.jeecgframework.core.extend.hqlsearch.HqlGenerateUtil.installHql(cq, hdOrderMain);
 		try{
 		//自定义追加查询条件
 		}catch (Exception e) {
 			throw new BusinessException(e.getMessage());
 		}
 		cq.add();
-		this.busiOrderService.getDataGridReturn(cq, true);
+		this.hdOrderMainService.getDataGridReturn(cq, true);
 		TagUtil.datagrid(response, dataGrid);
 	}
 
 	/**
-	 * 删除业务单
+	 * 删除业务单主表
 	 * 
 	 * @return
 	 */
 	@RequestMapping(params = "doDel")
 	@ResponseBody
-	public AjaxJson doDel(BusiOrderEntity busiOrder, HttpServletRequest request) {
+	public AjaxJson doDel(HdOrderMainEntity hdOrderMain, HttpServletRequest request) {
 		AjaxJson j = new AjaxJson();
-		busiOrder = systemService.getEntity(BusiOrderEntity.class, busiOrder.getId());
-		String message = "业务单删除成功";
+		hdOrderMain = systemService.getEntity(HdOrderMainEntity.class, hdOrderMain.getId());
+		String message = "业务单主表删除成功";
 		try{
-			busiOrderService.delMain(busiOrder);
+			hdOrderMainService.delMain(hdOrderMain);
 			systemService.addLog(message, Globals.Log_Type_DEL, Globals.Log_Leavel_INFO);
 		}catch(Exception e){
 			e.printStackTrace();
-			message = "业务单删除失败";
+			message = "业务单主表删除失败";
 			throw new BusinessException(e.getMessage());
 		}
 		j.setMsg(message);
@@ -139,7 +140,7 @@ public class BusiOrderController extends BaseController {
 	}
 
 	/**
-	 * 批量删除业务单
+	 * 批量删除业务单主表
 	 * 
 	 * @return
 	 */
@@ -147,18 +148,18 @@ public class BusiOrderController extends BaseController {
 	@ResponseBody
 	public AjaxJson doBatchDel(String ids,HttpServletRequest request){
 		AjaxJson j = new AjaxJson();
-		String message = "业务单删除成功";
+		String message = "业务单主表删除成功";
 		try{
 			for(String id:ids.split(",")){
-				BusiOrderEntity busiOrder = systemService.getEntity(BusiOrderEntity.class,
+				HdOrderMainEntity hdOrderMain = systemService.getEntity(HdOrderMainEntity.class,
 				id
 				);
-				busiOrderService.delMain(busiOrder);
+				hdOrderMainService.delMain(hdOrderMain);
 				systemService.addLog(message, Globals.Log_Type_DEL, Globals.Log_Leavel_INFO);
 			}
 		}catch(Exception e){
 			e.printStackTrace();
-			message = "业务单删除失败";
+			message = "业务单主表删除失败";
 			throw new BusinessException(e.getMessage());
 		}
 		j.setMsg(message);
@@ -166,46 +167,48 @@ public class BusiOrderController extends BaseController {
 	}
 
 	/**
-	 * 添加业务单
+	 * 添加业务单主表
 	 * 
 	 * @param ids
 	 * @return
 	 */
 	@RequestMapping(params = "doAdd")
 	@ResponseBody
-	public AjaxJson doAdd(BusiOrderEntity busiOrder,BusiOrderPage busiOrderPage, HttpServletRequest request) {
-		List<BusiOrderSalerEntity> busiOrderSalerList =  busiOrderPage.getBusiOrderSalerList();
+	public AjaxJson doAdd(HdOrderMainEntity hdOrderMain,HdOrderMainPage hdOrderMainPage, HttpServletRequest request) {
+		List<HdOrderBuyEntity> hdOrderBuyList =  hdOrderMainPage.getHdOrderBuyList();
+		List<HdOrderSellEntity> hdOrderSellList =  hdOrderMainPage.getHdOrderSellList();
 		AjaxJson j = new AjaxJson();
 		String message = "添加成功";
 		try{
-			busiOrderService.addMain(busiOrder, busiOrderSalerList);
+			hdOrderMainService.addMain(hdOrderMain, hdOrderBuyList,hdOrderSellList);
 			systemService.addLog(message, Globals.Log_Type_INSERT, Globals.Log_Leavel_INFO);
 		}catch(Exception e){
 			e.printStackTrace();
-			message = "业务单添加失败";
+			message = "业务单主表添加失败";
 			throw new BusinessException(e.getMessage());
 		}
 		j.setMsg(message);
 		return j;
 	}
 	/**
-	 * 更新业务单
+	 * 更新业务单主表
 	 * 
 	 * @param ids
 	 * @return
 	 */
 	@RequestMapping(params = "doUpdate")
 	@ResponseBody
-	public AjaxJson doUpdate(BusiOrderEntity busiOrder,BusiOrderPage busiOrderPage, HttpServletRequest request) {
-		List<BusiOrderSalerEntity> busiOrderSalerList =  busiOrderPage.getBusiOrderSalerList();
+	public AjaxJson doUpdate(HdOrderMainEntity hdOrderMain,HdOrderMainPage hdOrderMainPage, HttpServletRequest request) {
+		List<HdOrderBuyEntity> hdOrderBuyList =  hdOrderMainPage.getHdOrderBuyList();
+		List<HdOrderSellEntity> hdOrderSellList =  hdOrderMainPage.getHdOrderSellList();
 		AjaxJson j = new AjaxJson();
 		String message = "更新成功";
 		try{
-			busiOrderService.updateMain(busiOrder, busiOrderSalerList);
+			hdOrderMainService.updateMain(hdOrderMain, hdOrderBuyList,hdOrderSellList);
 			systemService.addLog(message, Globals.Log_Type_UPDATE, Globals.Log_Leavel_INFO);
 		}catch(Exception e){
 			e.printStackTrace();
-			message = "更新业务单失败";
+			message = "更新业务单主表失败";
 			throw new BusinessException(e.getMessage());
 		}
 		j.setMsg(message);
@@ -213,55 +216,77 @@ public class BusiOrderController extends BaseController {
 	}
 
 	/**
-	 * 业务单新增页面跳转
+	 * 业务单主表新增页面跳转
 	 * 
 	 * @return
 	 */
 	@RequestMapping(params = "goAdd")
-	public ModelAndView goAdd(BusiOrderEntity busiOrder, HttpServletRequest req) {
-		if (StringUtil.isNotEmpty(busiOrder.getId())) {
-			busiOrder = busiOrderService.getEntity(BusiOrderEntity.class, busiOrder.getId());
-			req.setAttribute("busiOrderPage", busiOrder);
+	public ModelAndView goAdd(HdOrderMainEntity hdOrderMain, HttpServletRequest req) {
+		if (StringUtil.isNotEmpty(hdOrderMain.getId())) {
+			hdOrderMain = hdOrderMainService.getEntity(HdOrderMainEntity.class, hdOrderMain.getId());
+			req.setAttribute("hdOrderMainPage", hdOrderMain);
 		}
-		return new ModelAndView("com/jeecg/testorder/busiOrder-add");
+		return new ModelAndView("com/jeecg/hdbus/hdOrderMain-add");
 	}
 	
 	/**
-	 * 业务单编辑页面跳转
+	 * 业务单主表编辑页面跳转
 	 * 
 	 * @return
 	 */
 	@RequestMapping(params = "goUpdate")
-	public ModelAndView goUpdate(BusiOrderEntity busiOrder, HttpServletRequest req) {
-		if (StringUtil.isNotEmpty(busiOrder.getId())) {
-			busiOrder = busiOrderService.getEntity(BusiOrderEntity.class, busiOrder.getId());
-			req.setAttribute("busiOrderPage", busiOrder);
+	public ModelAndView goUpdate(HdOrderMainEntity hdOrderMain, HttpServletRequest req) {
+		if (StringUtil.isNotEmpty(hdOrderMain.getId())) {
+			hdOrderMain = hdOrderMainService.getEntity(HdOrderMainEntity.class, hdOrderMain.getId());
+			req.setAttribute("hdOrderMainPage", hdOrderMain);
 		}
-		return new ModelAndView("com/jeecg/testorder/busiOrder-update");
+		return new ModelAndView("com/jeecg/hdbus/hdOrderMain-update");
 	}
 	
 	
 	/**
-	 * 加载明细列表[业务单测试]
+	 * 加载明细列表[买方信息]
 	 * 
 	 * @return
 	 */
-	@RequestMapping(params = "busiOrderSalerList")
-	public ModelAndView busiOrderSalerList(BusiOrderEntity busiOrder, HttpServletRequest req) {
+	@RequestMapping(params = "hdOrderBuyList")
+	public ModelAndView hdOrderBuyList(HdOrderMainEntity hdOrderMain, HttpServletRequest req) {
 	
 		//===================================================================================
 		//获取参数
-		Object id0 = busiOrder.getId();
+		Object id0 = hdOrderMain.getId();
 		//===================================================================================
-		//查询-业务单测试
-	    String hql0 = "from BusiOrderSalerEntity where 1 = 1 AND p_ID = ? ";
+		//查询-买方信息
+	    String hql0 = "from HdOrderBuyEntity where 1 = 1 AND p_ID = ? ";
 	    try{
-	    	List<BusiOrderSalerEntity> busiOrderSalerEntityList = systemService.findHql(hql0,id0);
-			req.setAttribute("busiOrderSalerList", busiOrderSalerEntityList);
+	    	List<HdOrderBuyEntity> hdOrderBuyEntityList = systemService.findHql(hql0,id0);
+			req.setAttribute("hdOrderBuyList", hdOrderBuyEntityList);
 		}catch(Exception e){
 			logger.info(e.getMessage());
 		}
-		return new ModelAndView("com/jeecg/order/busiOrderSalerList");
+		return new ModelAndView("com/jeecg/buy/hdOrderBuyList");
+	}
+	/**
+	 * 加载明细列表[卖方信息]
+	 * 
+	 * @return
+	 */
+	@RequestMapping(params = "hdOrderSellList")
+	public ModelAndView hdOrderSellList(HdOrderMainEntity hdOrderMain, HttpServletRequest req) {
+	
+		//===================================================================================
+		//获取参数
+		Object id1 = hdOrderMain.getId();
+		//===================================================================================
+		//查询-卖方信息
+	    String hql1 = "from HdOrderSellEntity where 1 = 1 AND p_ID = ? ";
+	    try{
+	    	List<HdOrderSellEntity> hdOrderSellEntityList = systemService.findHql(hql1,id1);
+			req.setAttribute("hdOrderSellList", hdOrderSellEntityList);
+		}catch(Exception e){
+			logger.info(e.getMessage());
+		}
+		return new ModelAndView("com/jeecg/sell/hdOrderSellList");
 	}
 
     /**
@@ -271,36 +296,40 @@ public class BusiOrderController extends BaseController {
     * @param response
     */
     @RequestMapping(params = "exportXls")
-    public String exportXls(BusiOrderEntity busiOrder,HttpServletRequest request, HttpServletResponse response, DataGrid dataGrid,ModelMap map) {
-    	CriteriaQuery cq = new CriteriaQuery(BusiOrderEntity.class, dataGrid);
+    public String exportXls(HdOrderMainEntity hdOrderMain,HttpServletRequest request, HttpServletResponse response, DataGrid dataGrid,ModelMap map) {
+    	CriteriaQuery cq = new CriteriaQuery(HdOrderMainEntity.class, dataGrid);
     	//查询条件组装器
-    	org.jeecgframework.core.extend.hqlsearch.HqlGenerateUtil.installHql(cq, busiOrder);
+    	org.jeecgframework.core.extend.hqlsearch.HqlGenerateUtil.installHql(cq, hdOrderMain);
     	try{
     	//自定义追加查询条件
     	}catch (Exception e) {
     		throw new BusinessException(e.getMessage());
     	}
     	cq.add();
-    	List<BusiOrderEntity> list=this.busiOrderService.getListByCriteriaQuery(cq, false);
-    	List<BusiOrderPage> pageList=new ArrayList<BusiOrderPage>();
+    	List<HdOrderMainEntity> list=this.hdOrderMainService.getListByCriteriaQuery(cq, false);
+    	List<HdOrderMainPage> pageList=new ArrayList<HdOrderMainPage>();
         if(list!=null&&list.size()>0){
-        	for(BusiOrderEntity entity:list){
+        	for(HdOrderMainEntity entity:list){
         		try{
-        		BusiOrderPage page=new BusiOrderPage();
+        		HdOrderMainPage page=new HdOrderMainPage();
         		   MyBeanUtils.copyBeanNotNull2Bean(entity,page);
             	    Object id0 = entity.getId();
-				    String hql0 = "from BusiOrderSalerEntity where 1 = 1 AND p_ID = ? ";
-        	        List<BusiOrderSalerEntity> busiOrderSalerEntityList = systemService.findHql(hql0,id0);
-            		page.setBusiOrderSalerList(busiOrderSalerEntityList);
+				    String hql0 = "from HdOrderBuyEntity where 1 = 1 AND p_ID = ? ";
+        	        List<HdOrderBuyEntity> hdOrderBuyEntityList = systemService.findHql(hql0,id0);
+            		page.setHdOrderBuyList(hdOrderBuyEntityList);
+            	    Object id1 = entity.getId();
+				    String hql1 = "from HdOrderSellEntity where 1 = 1 AND p_ID = ? ";
+        	        List<HdOrderSellEntity> hdOrderSellEntityList = systemService.findHql(hql1,id1);
+            		page.setHdOrderSellList(hdOrderSellEntityList);
             		pageList.add(page);
             	}catch(Exception e){
             		logger.info(e.getMessage());
             	}
             }
         }
-        map.put(NormalExcelConstants.FILE_NAME,"业务单");
-        map.put(NormalExcelConstants.CLASS,BusiOrderPage.class);
-        map.put(NormalExcelConstants.PARAMS,new ExportParams("业务单列表", "导出人:Jeecg",
+        map.put(NormalExcelConstants.FILE_NAME,"业务单主表");
+        map.put(NormalExcelConstants.CLASS,HdOrderMainPage.class);
+        map.put(NormalExcelConstants.PARAMS,new ExportParams("业务单主表列表", "导出人:Jeecg",
             "导出信息"));
         map.put(NormalExcelConstants.DATA_LIST,pageList);
         return NormalExcelConstants.JEECG_EXCEL_VIEW;
@@ -325,12 +354,12 @@ public class BusiOrderController extends BaseController {
 			params.setHeadRows(2);
 			params.setNeedSave(true);
 			try {
-				List<BusiOrderPage> list =  ExcelImportUtil.importExcel(file.getInputStream(), BusiOrderPage.class, params);
-				BusiOrderEntity entity1=null;
-				for (BusiOrderPage page : list) {
-					entity1=new BusiOrderEntity();
+				List<HdOrderMainPage> list =  ExcelImportUtil.importExcel(file.getInputStream(), HdOrderMainPage.class, params);
+				HdOrderMainEntity entity1=null;
+				for (HdOrderMainPage page : list) {
+					entity1=new HdOrderMainEntity();
 					MyBeanUtils.copyBeanNotNull2Bean(page,entity1);
-		            busiOrderService.addMain(entity1, page.getBusiOrderSalerList());
+		            hdOrderMainService.addMain(entity1, page.getHdOrderBuyList(),page.getHdOrderSellList());
 				}
 				j.setMsg("文件导入成功！");
 			} catch (Exception e) {
@@ -351,9 +380,9 @@ public class BusiOrderController extends BaseController {
 	*/
 	@RequestMapping(params = "exportXlsByT")
 	public String exportXlsByT(ModelMap map) {
-		map.put(NormalExcelConstants.FILE_NAME,"业务单");
-		map.put(NormalExcelConstants.CLASS,BusiOrderPage.class);
-		map.put(NormalExcelConstants.PARAMS,new ExportParams("业务单列表", "导出人:"+ ResourceUtil.getSessionUserName().getRealName(),
+		map.put(NormalExcelConstants.FILE_NAME,"业务单主表");
+		map.put(NormalExcelConstants.CLASS,HdOrderMainPage.class);
+		map.put(NormalExcelConstants.PARAMS,new ExportParams("业务单主表列表", "导出人:"+ ResourceUtil.getSessionUserName().getRealName(),
 		"导出信息"));
 		map.put(NormalExcelConstants.DATA_LIST,new ArrayList());
 		return NormalExcelConstants.JEECG_EXCEL_VIEW;
@@ -365,22 +394,22 @@ public class BusiOrderController extends BaseController {
 	*/
 	@RequestMapping(params = "upload")
 	public ModelAndView upload(HttpServletRequest req) {
-		req.setAttribute("controller_name", "busiOrderController");
+		req.setAttribute("controller_name", "hdOrderMainController");
 		return new ModelAndView("common/upload/pub_excel_upload");
 	}
 
  	
  	@RequestMapping(method = RequestMethod.GET)
 	@ResponseBody
-	public List<BusiOrderEntity> list() {
-		List<BusiOrderEntity> listBusiOrders=busiOrderService.getList(BusiOrderEntity.class);
-		return listBusiOrders;
+	public List<HdOrderMainEntity> list() {
+		List<HdOrderMainEntity> listHdOrderMains=hdOrderMainService.getList(HdOrderMainEntity.class);
+		return listHdOrderMains;
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	@ResponseBody
 	public ResponseEntity<?> get(@PathVariable("id") String id) {
-		BusiOrderEntity task = busiOrderService.get(BusiOrderEntity.class, id);
+		HdOrderMainEntity task = hdOrderMainService.get(HdOrderMainEntity.class, id);
 		if (task == null) {
 			return new ResponseEntity(HttpStatus.NOT_FOUND);
 		}
@@ -389,27 +418,28 @@ public class BusiOrderController extends BaseController {
  	
  	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public ResponseEntity<?> create(@RequestBody BusiOrderPage busiOrderPage, UriComponentsBuilder uriBuilder) {
+	public ResponseEntity<?> create(@RequestBody HdOrderMainPage hdOrderMainPage, UriComponentsBuilder uriBuilder) {
 		//调用JSR303 Bean Validator进行校验，如果出错返回含400错误码及json格式的错误信息.
-		Set<ConstraintViolation<BusiOrderPage>> failures = validator.validate(busiOrderPage);
+		Set<ConstraintViolation<HdOrderMainPage>> failures = validator.validate(hdOrderMainPage);
 		if (!failures.isEmpty()) {
 			return new ResponseEntity(BeanValidators.extractPropertyAndMessage(failures), HttpStatus.BAD_REQUEST);
 		}
 
 		//保存
-		List<BusiOrderSalerEntity> busiOrderSalerList =  busiOrderPage.getBusiOrderSalerList();
+		List<HdOrderBuyEntity> hdOrderBuyList =  hdOrderMainPage.getHdOrderBuyList();
+		List<HdOrderSellEntity> hdOrderSellList =  hdOrderMainPage.getHdOrderSellList();
 		
-		BusiOrderEntity busiOrder = new BusiOrderEntity();
+		HdOrderMainEntity hdOrderMain = new HdOrderMainEntity();
 		try{
-			MyBeanUtils.copyBeanNotNull2Bean(busiOrder,busiOrderPage);
+			MyBeanUtils.copyBeanNotNull2Bean(hdOrderMain,hdOrderMainPage);
 		}catch(Exception e){
             logger.info(e.getMessage());
         }
-		busiOrderService.addMain(busiOrder, busiOrderSalerList);
+		hdOrderMainService.addMain(hdOrderMain, hdOrderBuyList,hdOrderSellList);
 
 		//按照Restful风格约定，创建指向新任务的url, 也可以直接返回id或对象.
-		String id = busiOrderPage.getId();
-		URI uri = uriBuilder.path("/rest/busiOrderController/" + id).build().toUri();
+		String id = hdOrderMainPage.getId();
+		URI uri = uriBuilder.path("/rest/hdOrderMainController/" + id).build().toUri();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setLocation(uri);
 
@@ -417,23 +447,24 @@ public class BusiOrderController extends BaseController {
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> update(@RequestBody BusiOrderPage busiOrderPage) {
+	public ResponseEntity<?> update(@RequestBody HdOrderMainPage hdOrderMainPage) {
 		//调用JSR303 Bean Validator进行校验，如果出错返回含400错误码及json格式的错误信息.
-		Set<ConstraintViolation<BusiOrderPage>> failures = validator.validate(busiOrderPage);
+		Set<ConstraintViolation<HdOrderMainPage>> failures = validator.validate(hdOrderMainPage);
 		if (!failures.isEmpty()) {
 			return new ResponseEntity(BeanValidators.extractPropertyAndMessage(failures), HttpStatus.BAD_REQUEST);
 		}
 
 		//保存
-		List<BusiOrderSalerEntity> busiOrderSalerList =  busiOrderPage.getBusiOrderSalerList();
+		List<HdOrderBuyEntity> hdOrderBuyList =  hdOrderMainPage.getHdOrderBuyList();
+		List<HdOrderSellEntity> hdOrderSellList =  hdOrderMainPage.getHdOrderSellList();
 		
-		BusiOrderEntity busiOrder = new BusiOrderEntity();
+		HdOrderMainEntity hdOrderMain = new HdOrderMainEntity();
 		try{
-			MyBeanUtils.copyBeanNotNull2Bean(busiOrder,busiOrderPage);
+			MyBeanUtils.copyBeanNotNull2Bean(hdOrderMain,hdOrderMainPage);
 		}catch(Exception e){
             logger.info(e.getMessage());
         }
-		busiOrderService.updateMain(busiOrder, busiOrderSalerList);
+		hdOrderMainService.updateMain(hdOrderMain, hdOrderBuyList,hdOrderSellList);
 
 		//按Restful约定，返回204状态码, 无内容. 也可以返回200状态码.
 		return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -442,7 +473,7 @@ public class BusiOrderController extends BaseController {
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void delete(@PathVariable("id") String id) {
-		BusiOrderEntity busiOrder = busiOrderService.get(BusiOrderEntity.class, id);
-		busiOrderService.delMain(busiOrder);
+		HdOrderMainEntity hdOrderMain = hdOrderMainService.get(HdOrderMainEntity.class, id);
+		hdOrderMainService.delMain(hdOrderMain);
 	}
 }
